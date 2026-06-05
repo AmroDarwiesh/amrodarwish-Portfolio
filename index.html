@@ -31,6 +31,7 @@
       --radius-md: 14px; --radius-lg: 20px; --radius-xl: 28px;
       --transition-smooth: 0.4s cubic-bezier(0.25,0.1,0.25,1);
       --max-width: 1200px;
+      --card-size: 260px; /* base square size */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -406,6 +407,7 @@
       will-change: transform;
       user-select: none;
       cursor: grab;
+      align-items: flex-start; /* so cards don't stretch vertically when one expands */
     }
 
     .carousel__track:active {
@@ -413,22 +415,25 @@
     }
 
     .project-card {
-      flex: 0 0 280px;
-      width: 280px;
-      aspect-ratio: 1 / 1;
+      flex: 0 0 var(--card-size);
+      width: var(--card-size);
       background: white;
       border-radius: var(--radius-xl);
       padding: 1.5rem;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
       box-shadow: 0 4px 20px rgba(0,0,0,0.06);
       border: 1px solid rgba(0,0,0,0.03);
-      transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.35s ease, border-color 0.35s;
+      transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.35s ease, border-color 0.35s, height 0.35s ease;
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      height: var(--card-size); /* initial square height */
+    }
+
+    .project-card.expanded {
+      height: auto;
+      overflow: visible;
     }
 
     .project-card::before {
@@ -460,6 +465,7 @@
       transition: transform 0.3s ease;
       overflow: hidden;
       position: relative;
+      flex-shrink: 0;
     }
 
     .project-card:hover .project-card__image {
@@ -487,23 +493,24 @@
       max-height: 0;
       overflow: hidden;
       opacity: 0;
-      transition: max-height 0.5s ease, opacity 0.4s, margin 0.5s;
+      transition: max-height 0.4s ease, opacity 0.3s, margin 0.4s;
       width: 100%;
       margin-top: 0;
       position: relative;
       z-index: 2;
     }
     .project-card__expand.open {
-      max-height: 150px;
+      max-height: 500px; /* enough for multiline content */
       opacity: 1;
       margin-top: 0.8rem;
     }
     .project-card__expand-content {
       font-size: 0.85rem;
       color: var(--text-secondary);
-      line-height: 1.5;
+      line-height: 1.6;
       padding-top: 0.5rem;
       border-top: 1px solid var(--light-gray);
+      word-break: break-word;
     }
     .project-card__indicator {
       font-size: 0.8rem;
@@ -543,12 +550,6 @@
     .carousel__btn--left { left: -12px; }
     .carousel__btn--right { right: -12px; }
     .carousel__btn:disabled { opacity: 0.3; pointer-events: none; }
-
-    @media (max-width: 768px) {
-      .carousel__btn { display: none; }
-      .project-card { flex: 0 0 240px; width: 240px; }
-    }
-    /* ========== END PROJECTS ========== */
 
     /* CONTACT (NO FORM) */
     .contact {
@@ -614,10 +615,20 @@
     }
     .fade-in-up.visible { opacity: 1; transform: translateY(0); }
 
+    /* Responsive adjustments */
     @media (max-width: 900px) {
+      :root { --card-size: 240px; }
       .hero__apple.moved { transform: translate(calc(-50% - 20vw), -50%) scale(0.45); }
     }
+    @media (max-width: 768px) {
+      :root { --card-size: 220px; }
+      .carousel__btn { display: none; }
+      .nav { padding: 1rem 1.5rem; }
+      .nav__list { gap: 1.5rem; padding: 0.5rem 1.8rem; }
+      .nav__logo { height: 28px; width: 28px; margin-right: 1rem; }
+    }
     @media (max-width: 600px) {
+      :root { --card-size: 200px; }
       .hero__apple.moved { transform: translate(calc(-50% - 12vw), -50%) scale(0.4); }
       .about__container { grid-template-columns: 1fr; }
       .hero__name { font-size: 2.4rem; }
@@ -630,9 +641,7 @@
   <nav class="nav" id="nav">
     <ul class="nav__list">
       <li>
-        <img src="logo.png" 
-             alt="logo" class="nav__logo" 
-             style="height:92px; width:92px; object-fit:contain; border-radius: 80%;">
+        <img src="logo.png" alt="logo" class="nav__logo" style="height:38px; width:38px; object-fit:contain; border-radius: 50%;">
       </li>
       <li><a href="#about" class="nav__link">About Me</a></li>
       <li><a href="#projects" class="nav__link">Projects</a></li>
@@ -738,7 +747,7 @@
               </div>
               <h3 class="project-card__title">Clothing Sales Website</h3>
               <div class="project-card__expand">
-                <div class="project-card__expand-content">A modern e-commerce site for a clothing brand. <a href="https://www.bing.com/ck/a?!&&p=9fb6afa1d019d27802a9d20cdd49180a15071b1a1a50c7518717ce4dca4d7667JmltdHM9MTc4MDYxNzYwMA&ptn=3&ver=2&hsh=4&fclid=2fceda76-6794-6270-3951-cd44665c6392&psq=yara+kanaan+atelier&u=a1aHR0cHM6Ly95YXJha2FuYWFuLmNvbS8">link</a></div>
+                <div class="project-card__expand-content">A modern e-commerce site for a clothing brand. <a href="https://www.bing.com/ck/a?!&&p=9fb6afa1d019d27802a9d20cdd49180a15071b1a1a50c7518717ce4dca4d7667JmltdHM9MTc4MDYxNzYwMA&ptn=3&ver=2&hsh=4&fclid=2fceda76-6794-6270-3951-cd44665c6392&psq=yara+kanaan+atelier&u=a1aHR0cHM6Ly95YXJha2FubmFuLmNvbS8">link</a></div>
               </div>
               <span class="project-card__indicator">Details ↓</span>
             </div>
@@ -749,7 +758,6 @@
     </div>
   </section>
 
-  <!-- CONTACT SECTION – NO FORM, ONLY LINKS -->
   <section class="contact" id="contact">
     <div class="contact__container">
       <h2 class="contact__heading fade-in-up" data-animate>Get In Touch</h2>
@@ -790,15 +798,16 @@
         nav.classList.add('visible');
       }, 1000);
 
-      // Project card expand
+      // Project card expand (prevents link click from toggling, and adds .expanded to card)
       document.querySelectorAll('[data-project-card]').forEach(card => {
         const expand = card.querySelector('.project-card__expand');
         const indicator = card.querySelector('.project-card__indicator');
         let open = false;
         card.addEventListener('click', (e) => {
-          if (e.target.closest('button')) return;
+          if (e.target.closest('a') || e.target.closest('button')) return;
           open = !open;
           expand.classList.toggle('open', open);
+          card.classList.toggle('expanded', open);
           if (indicator) {
             indicator.innerHTML = open ? 'Details ↑' : 'Details ↓';
           }
@@ -813,30 +822,34 @@
       }, { threshold: 0.15 });
       document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
 
-      // Carousel logic
+      // Carousel logic (unchanged, but card width now respects CSS variable)
       const track = document.getElementById('carouselTrack');
       const leftBtn = document.getElementById('scrollLeftBtn');
       const rightBtn = document.getElementById('scrollRightBtn');
       const card = track.querySelector('.project-card');
       if (!card) return;
 
-      const cardWidth = card.offsetWidth + parseFloat(getComputedStyle(track).gap);
+      function getCardWidth() {
+        return card.offsetWidth + parseFloat(getComputedStyle(track).gap);
+      }
       let currentTranslate = 0;
-      const maxTranslate = -(track.scrollWidth - track.parentElement.clientWidth);
+      const maxTranslate = () => -(track.scrollWidth - track.parentElement.clientWidth);
 
       function updateButtons() {
+        const maxT = maxTranslate();
         leftBtn.disabled = currentTranslate >= 0;
-        rightBtn.disabled = currentTranslate <= maxTranslate + 10;
+        rightBtn.disabled = currentTranslate <= maxT + 10;
       }
 
       function scrollTo(offset) {
-        currentTranslate = Math.min(0, Math.max(maxTranslate, offset));
+        const maxT = maxTranslate();
+        currentTranslate = Math.min(0, Math.max(maxT, offset));
         track.style.transform = `translateX(${currentTranslate}px)`;
         updateButtons();
       }
 
-      leftBtn.addEventListener('click', () => scrollTo(currentTranslate + cardWidth));
-      rightBtn.addEventListener('click', () => scrollTo(currentTranslate - cardWidth));
+      leftBtn.addEventListener('click', () => scrollTo(currentTranslate + getCardWidth()));
+      rightBtn.addEventListener('click', () => scrollTo(currentTranslate - getCardWidth()));
 
       let isDown = false, startX, startTranslate;
       track.addEventListener('mousedown', (e) => {
@@ -859,8 +872,8 @@
         scrollTo(startTranslate + e.touches[0].clientX - startX);
       });
       window.addEventListener('resize', () => {
-        const newMax = -(track.scrollWidth - track.parentElement.clientWidth);
-        currentTranslate = Math.min(0, Math.max(newMax, currentTranslate));
+        const maxT = maxTranslate();
+        currentTranslate = Math.min(0, Math.max(maxT, currentTranslate));
         track.style.transform = `translateX(${currentTranslate}px)`;
         updateButtons();
       });
